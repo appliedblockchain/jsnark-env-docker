@@ -1,0 +1,25 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: docker:18.06.1-ce
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t appliedblockchain/jsnark-env .
+      - run:
+          name: Log in to Docker Hub
+          command: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
+      - run:
+          name: Push Docker image
+          command: docker push appliedblockchain/jsnark-env
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          context: org-global
